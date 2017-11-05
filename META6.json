@@ -1,1 +1,22 @@
-{"name":"Telemetry::httpd","source-url":"https://github.com/gfldex/perl6-telemetry-httpd.git","support":{"source":null},"perl":"6.c","resources":[null],"build-depends":[null],"auth":"github:gfldex","depends":["Test::META"],"tags":[null],"license":"Artistic-2.0","test-depends":[null],"provides":},"production":false,"version":"0.0.1","meta-version":"0","authors":["Wenzel P. P. Peppmeyer <wenzel.peppmeyer@gmx.de>"],"description":""}
+{
+    "name": "Telemetry::httpd",
+    "source-url": "https://github.com/gfldex/perl6-telemetry-httpd.git",
+    "support": { "source": null },
+    "perl": "6.c",
+    "resources": [],
+    "build-depends": [],
+    "auth": "github:gfldex",
+    "depends": [ "Test::META" ],
+    "tags": [],
+    "license": "Artistic-2.0",
+    "test-depends": [],
+    "provides": {
+        "Telemetry::httpd": "lib/Telemetry"
+    },
+    "version": "0.0.1",
+    "meta-version": "0",
+    "authors": [
+        "Wenzel P. P. Peppmeyer <wenzel.peppmeyer@gmx.de>"
+    ],
+    "description": "Add a Simple httpd to any Perl 6 program that listens on 5565 by default and reports telemetry gathered by use Telemetry;"
+}
