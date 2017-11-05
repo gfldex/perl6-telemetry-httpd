@@ -23,6 +23,8 @@ The default interval of 1 second can be changed by `GET /interval=66.6`. The
 httpd-server thread can be terminated by `GET /stop-server` and taking
 telemetry snapshots can be stopped with `GET /stop-snapper`.
 
+The default port of 5565 can be changed via `%*ENV<RAKUDO_REPORT_PORT>`.
+
 ## LICENSE
 
 All files (unless noted otherwise) can be used, modified and redistributed
