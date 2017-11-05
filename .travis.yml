@@ -4,5 +4,5 @@ perl6:
     - latest
 install:
     - rakudobrew build-zef
-    - zef install --force --/test Test::META
+    - zef install --force --/test --/test-depends Test::META
     - zef install .
