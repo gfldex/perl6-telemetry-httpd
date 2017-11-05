@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/gfldex/perl6-telemetry-httpd.svg?branch=master)](https://travis-ci.org/gfldex/perl6-telemetry-httpd)
 
 Add a Simple httpd to any Perl 6 program that listens on 5565 by default and
-reports telemetry gathered by `Telemetry`;
+reports telemetry gathered by `use Telemetry;`
 
 ## SYNOPSIS
 
