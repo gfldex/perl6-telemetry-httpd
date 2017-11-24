@@ -16,7 +16,7 @@ loop {
 }
 ```
 
-The httpd server process is started when the module is loaded. Reports can be
+The httpd server thread is started when the module is loaded. Reports can be
 fetched with `GET /` as text.
 
 The default interval of 1 second can be changed by `GET /interval=66.6`. The
