@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/gfldex/perl6-telemetry-httpd.svg?branch=master)](https://travis-ci.org/gfldex/perl6-telemetry-httpd)
 
-Add a Simple httpd to any Perl 6 program that listens on 5565 by default and
+Add a Simple httpd to any Perl 6 program that listens on 5000 by default and
 reports telemetry gathered by `use Telemetry;`
 
 ## SYNOPSIS
@@ -23,7 +23,10 @@ The default interval of 1 second can be changed by `GET /interval=66.6`. The
 httpd-server thread can be terminated by `GET /stop-server` and taking
 telemetry snapshots can be stopped with `GET /stop-snapper`.
 
-The default port of 5565 can be changed via `%*ENV<RAKUDO_REPORT_PORT>`.
+The default port of 5000 can be changed via `%*ENV<RAKUDO_REPORT_PORT>`.
+
+By default binding happens on localhost. This can be changed via
+`%*ENV<RAKUDO_TELEMETRY_LISTEN>`.
 
 ## LICENSE
 
