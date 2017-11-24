@@ -1,14 +1,16 @@
 use v6.c;
 use Telemetry;
 
-constant $port = %*ENV<RAKUDO_TELEMETRY_PORT> // 5565;
-constant $local-addr = %*ENV<RAKUDO_TELEMETRY_LISTEN> // ‚0.0.0.0‘;
+constant $port = %*ENV<RAKUDO_TELEMETRY_PORT> // 666;
+constant $local-addr = %*ENV<RAKUDO_TELEMETRY_LISTEN> // ‚localhost‘;
 
 constant HTTP-HEADER = "HTTP/1.1 200 OK", "Content-Type: text/plain; charset=UTF-8", "Content-Encoding: UTF-8", "";
 constant term:<HTTP-HEADER-404> = "HTTP/1.1 404 Not Found", "Content-Type: text/plain; charset=UTF-8", "Content-Encoding: UTF-8", "";
 constant term:<HTTP-HEADER-408> = "HTTP/1.1 408 Request Timeout", "Content-Type: text/plain; charset=UTF-8", "Content-Encoding: UTF-8", "";
 
 my &BOLD = $*OUT.t ?? sub (*@s) { "\e[1m{@s.join('')}\e[0m" } !! sub (|c) { c };
+
+say $local-addr;
 
 INIT start react {
     snapper(1);
