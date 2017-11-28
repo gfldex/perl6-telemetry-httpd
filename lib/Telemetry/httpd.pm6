@@ -17,15 +17,14 @@ INIT start {
         whenever IO::Socket::Async.listen($local-addr, $port) -> $conn {
             my @msg = HTTP-HEADER;
 
-            whenever $conn.Supply.lines {
+            whenever $conn.Supply.lines.list {
                 # we only really care about the first line in a http header.
-                if /^GET <ws> (<[\w„/.=“]>+) [„HTTP“ \d „/“ \d]? / {
+                if .head ~~ /^GET <ws> (<[\w„/.=“]>+) [„HTTP“ \d „/“ \d]? / {
                     given $0.Str {
                         when „/“ {
                             # @msg[1] = ‚Content-Type: application/xhtml+xml; charset=UTF-8‘;
                             @msg.push: report(:!header-repeat);
                         }
-
                         when m{ '/interval' } {
                             my $new-interval = .split(‚=‘)[1].Rat;
                             snapper( $new-interval );
@@ -48,7 +47,7 @@ INIT start {
                 }
 
                 # `lines` returns the empty string on a double newline, as we get at the end of a http header.
-                if /^$/ {
+                if .tail ~~ /^$/ {
                     $conn.print: @msg »~» "\n";
                     $conn.close;
                 }
