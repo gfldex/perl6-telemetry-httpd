@@ -1,8 +1,8 @@
 use v6.c;
 use Telemetry;
 
-
-constant HTTP-HEADER = "HTTP/1.1 200 OK", "Content-Type: text/plain; charset=UTF-8", "Content-Encoding: UTF-8", "";
+constant CRLF = "\x0D\x0A";
+constant HTTP-HEADER = "HTTP/1.1 200 OK", "Content-Type: text/plain; charset=utf-8", "Content-Encoding: utf-8", "";
 constant term:<HTTP-HEADER-404> = "HTTP/1.1 404 Not Found", "Content-Type: text/plain; charset=UTF-8", "Content-Encoding: UTF-8", "";
 constant term:<HTTP-HEADER-408> = "HTTP/1.1 408 Request Timeout", "Content-Type: text/plain; charset=UTF-8", "Content-Encoding: UTF-8", "";
 
@@ -15,7 +15,7 @@ INIT start {
 
         snapper(1);
         whenever IO::Socket::Async.listen($local-addr, $port) -> $conn {
-            my @msg = HTTP-HEADER;
+            my @msg = join('', HTTP-HEADER »~» CRLF);
 
             whenever $conn.Supply.lines.list {
                 # we only really care about the first line in a http header.
@@ -29,6 +29,10 @@ INIT start {
                             my $new-interval = .split(‚=‘)[1].Rat;
                             snapper( $new-interval );
                             @msg.push: „Interval set to $new-interval“;
+                        }
+
+                        when ‚/csv‘ {
+                            @msg.push: report(:csv);
                         }
 
                         when „/stop-server“ {
@@ -48,7 +52,7 @@ INIT start {
 
                 # `lines` returns the empty string on a double newline, as we get at the end of a http header.
                 if .tail ~~ /^$/ {
-                    $conn.print: @msg »~» "\n";
+                    $conn.print: @msg.join('');
                     $conn.close;
                 }
             }
