@@ -15,7 +15,7 @@ INIT start {
 
         snapper(1);
         whenever IO::Socket::Async.listen($local-addr, $port) -> $conn {
-            my @msg = join('', HTTP-HEADER »~» CRLF);
+            my @msg = HTTP-HEADER »~» CRLF;
 
             whenever $conn.Supply.lines.list {
                 # we only really care about the first line in a http header.
