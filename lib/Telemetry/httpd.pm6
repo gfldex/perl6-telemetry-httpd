@@ -6,6 +6,7 @@ constant NL = "\n";
 constant HTTP-HEADER = "HTTP/1.1 200 OK", "Content-Type: text/plain; charset=utf-8", "Content-Encoding: utf-8", "";
 constant term:<HTTP-HEADER-404> = "HTTP/1.1 404 Not Found", "Content-Type: text/plain; charset=UTF-8", "Content-Encoding: UTF-8", "";
 constant term:<HTTP-HEADER-408> = "HTTP/1.1 408 Request Timeout", "Content-Type: text/plain; charset=UTF-8", "Content-Encoding: UTF-8", "";
+constant term:<HTTP-HEADER-501> = "HTTP/1.1 501 Internal Server Error", "Content-Type: text/plain; charset=utf-8", "Content-Encoding: utf-8", "";
 
 my &BOLD = $*OUT.t ?? sub (*@s) { "\e[1m{@s.join('')}\e[0m" } !! sub (|c) { c };
 
@@ -57,6 +58,9 @@ INIT start {
 
                             my @report = report(:csv, :!legend).split(NL);
 
+                            my $tmp := Nil;
+                            note tr($tmp);
+
                             @msg.push: @report[2]».&th».&tr;
                             @msg.push: @report.tail(*-3)».&td».&tr;
 
@@ -83,6 +87,14 @@ INIT start {
                     $conn.print: @msg.join('');
                     $conn.close;
                 }
+                CATCH {
+                    default {
+                        $conn.print: join('', HTTP-HEADER-501 »~» CRLF);
+                        $conn.print: ‚501 Internal Server Error‘ ~ NL ~ NL;
+                        $conn.print: .^name ~ ': ' ~ .Str ~ NL ~ .backtrace;
+                        $conn.close;
+                    } 
+                }
             }
             whenever Promise.in(60) {
                 $conn.close;
@@ -90,9 +102,8 @@ INIT start {
 
             CLOSE {
             }
-            CATCH { default { warn BOLD .^name, ': ', .Str; } }
         }
     }
     
-    CATCH { default { warn BOLD .^name, ': ', .Str; } }
+    CATCH { default { warn BOLD .^name, ': ', .Str, NL, .backtrace; } }
 }
