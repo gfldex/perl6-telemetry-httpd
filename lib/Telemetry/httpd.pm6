@@ -2,11 +2,21 @@ use v6.c;
 use Telemetry;
 
 constant CRLF = "\x0D\x0A";
+constant NL = "\n";
 constant HTTP-HEADER = "HTTP/1.1 200 OK", "Content-Type: text/plain; charset=utf-8", "Content-Encoding: utf-8", "";
 constant term:<HTTP-HEADER-404> = "HTTP/1.1 404 Not Found", "Content-Type: text/plain; charset=UTF-8", "Content-Encoding: UTF-8", "";
 constant term:<HTTP-HEADER-408> = "HTTP/1.1 408 Request Timeout", "Content-Type: text/plain; charset=UTF-8", "Content-Encoding: UTF-8", "";
 
 my &BOLD = $*OUT.t ?? sub (*@s) { "\e[1m{@s.join('')}\e[0m" } !! sub (|c) { c };
+
+constant CSS = Q:to /EOH/;
+<style>
+    table.rakudo-telemetry tr:nth-child(even) { background: #eee; }
+    table.rakudo-telemetry tr:nth-child(odd) { background: #fff; }
+    table.rakudo-telemetry td { font-family: monospace; }
+</style>
+<link rel="stylesheet" type="text/css" href="./rakudo-telemetry.css" />
+EOH
 
 INIT start {
     react {
@@ -33,6 +43,24 @@ INIT start {
 
                         when ‚/csv‘ {
                             @msg.push: report(:csv, :!legend);
+                        }
+
+                        when ‚/html‘ {
+                            @msg[1] = ‚Content-Type: application/xhtml+xml; charset=UTF-8‘ ~ CRLF;
+                            @msg.push: ‚<?xml version="1.0" encoding="UTF-8"?>‘ ~ NL;
+                            @msg.push: „<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">“ ~ NL;
+                            @msg.push: „<html xmlns="http://www.w3.org/1999/xhtml"><head><title>PLACEHOLDER</title>{CSS}</head><body><table class="rakudo-telemetry">“;
+
+                            sub tr(Str $s){ ‚<tr>‘ ~ $s ~ ‚</tr>‘ };
+                            sub td(Str $s){ [~] ‚<td>‘ «~« $s.split(‚ ‘) »~» ‚</td>‘ };
+                            sub th(Str $s){ [~] ‚<th>‘ «~« $s.split(‚ ‘) »~» ‚</th>‘ };
+
+                            my @report = report(:csv, :!legend).split(NL);
+
+                            @msg.push: @report[2]».&th».&tr;
+                            @msg.push: @report.tail(*-3)».&td».&tr;
+
+                            @msg.push: ‚</table></body></html>‘;
                         }
 
                         when „/stop-server“ {
