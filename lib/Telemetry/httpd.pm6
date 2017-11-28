@@ -32,7 +32,7 @@ INIT start {
                         }
 
                         when ‚/csv‘ {
-                            @msg.push: report(:csv);
+                            @msg.push: report(:csv, :!legend);
                         }
 
                         when „/stop-server“ {
